@@ -1,0 +1,22 @@
+[project]
+name = "batch-wap"
+version = "0.1.0"
+description = "Write audit publish implementation for batched data workflows."
+readme = "README.md"
+authors = [
+    { name = "jduran9987", email = "jduran9987@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "faker>=40.20.0",
+    "polars>=1.41.2",
+    "pyarrow>=24.0.0",
+    "pyiceberg[glue]>=0.11.1",
+]
+
+[project.scripts]
+batch-data-generator = "batch_wap.sources.batch_data_generator.cli:main"
+
+[build-system]
+requires = ["uv_build>=0.9.18,<0.10.0"]
+build-backend = "uv_build"
