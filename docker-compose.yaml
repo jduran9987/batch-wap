@@ -1,0 +1,30 @@
+services:
+  clickhouse:
+    image: clickhouse/clickhouse-server:26.2
+    container_name: clickhouse
+    ports:
+      - "8123:8123"  # HTTP interface
+      - "9000:9000"  # native TCP interface
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    environment:
+      # Optional: set a default user/password instead of the implicit `default` user
+      CLICKHOUSE_USER: batchwap 
+      CLICKHOUSE_PASSWORD: batchwap 
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
+    volumes:
+      - clickhouse-data:/var/lib/clickhouse
+      - clickhouse-logs:/var/log/clickhouse-server
+      # Enables the (beta) Glue data lake catalog by default for the `default` profile
+      - ./config/users.d/data_lake.yaml:/etc/clickhouse-server/users.d/data_lake.yaml:ro
+    healthcheck:
+      test: ["CMD", "clickhouse-client", "--query", "SELECT 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  clickhouse-data:
+  clickhouse-logs:

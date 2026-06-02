@@ -11,3 +11,6 @@ wheels/
 
 # State tracking files
 .batch_wap_state.json
+
+# Sensitive
+config/
