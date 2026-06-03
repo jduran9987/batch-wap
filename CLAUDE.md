@@ -89,16 +89,14 @@ place, so their behavior can be compared.
 │       ├── __init__.py
 │       ├── ingestion
 │       │   └── wap_v1
-│       ├── sources
-│       │   ├── __init__.py
-│       │   └── batch_data_generator
-│       │       ├── __init__.py
-│       │       ├── cli.py
-│       │       ├── envelope.py
-│       │       ├── generator.py
-│       │       ├── README.md
-│       │       ├── sink.py
-│       │       └── state.py
-│       └── warehouse
-│           └── queries.sql
+│       └── sources
+│           ├── __init__.py
+│           └── batch_data_generator
+│               ├── __init__.py
+│               ├── cli.py
+│               ├── envelope.py
+│               ├── generator.py
+│               ├── README.md
+│               ├── sink.py
+│               └── state.py
 ```

@@ -5,8 +5,6 @@ lakehouse on AWS (Glue catalog + S3). The project produces batches of event
 data, lands them in Iceberg, and supports auditing and querying the results
 before they are promoted downstream.
 
-This README is a living document and will grow as the project develops.
-
 ## Batch Data Generator
 
 `src/batch_wap/sources/batch_data_generator/` produces batches of synthetic,
@@ -24,8 +22,7 @@ options: [`src/batch_wap/sources/batch_data_generator/README.md`](src/batch_wap/
 
 ## ClickHouse
 
-ClickHouse queries the Iceberg lakehouse through the same Glue catalog the
-generator writes to. It runs locally as a container.
+All tables produced by this application will be written to ClickHouse, which is deployed as a container using Docker Compose.
 
 Start it:
 
@@ -35,27 +32,12 @@ docker compose up -d
 
 Then open the Play UI in the browser: <http://localhost:8123/play>
 
-### Connect to the Glue catalog
-
-Create a database backed by the Glue data lake catalog, supplying the AWS
-credentials and region:
-
-```sql
-CREATE DATABASE datalake
-ENGINE = DataLakeCatalog
-SETTINGS
-    catalog_type = 'glue',
-    region = 'us-east-1',
-    aws_access_key_id = '<AWS_ACCESS_KEY_ID>',
-    aws_secret_access_key = '<AWS_SECRET_ACCESS_KEY>';
-```
-
 ### Query a table
 
-Reference tables as `<database>.<namespace.table>`:
+Reference tables as `<database.table>`:
 
 ```sql
 SELECT *
-FROM datalake.`batch_wap.raw_events`
+FROM datalake.`raw.raw_events`
 LIMIT 10;
 ```
