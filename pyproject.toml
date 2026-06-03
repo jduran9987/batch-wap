@@ -8,10 +8,8 @@ authors = [
 ]
 requires-python = ">=3.12"
 dependencies = [
+    "clickhouse-connect>=0.8.0",
     "faker>=40.20.0",
-    "polars>=1.41.2",
-    "pyarrow>=24.0.0",
-    "pyiceberg[glue]>=0.11.1",
 ]
 
 [project.scripts]
@@ -20,3 +18,8 @@ batch-data-generator = "batch_wap.sources.batch_data_generator.cli:main"
 [build-system]
 requires = ["uv_build>=0.9.18,<0.10.0"]
 build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.3",
+]
