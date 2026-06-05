@@ -38,6 +38,6 @@ Reference tables as `<database.table>`:
 
 ```sql
 SELECT *
-FROM datalake.`raw.raw_events`
+FROM raw.raw_events
 LIMIT 10;
 ```
