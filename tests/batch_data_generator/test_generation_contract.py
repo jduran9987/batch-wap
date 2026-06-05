@@ -97,6 +97,49 @@ def test_duplicate_id_collides_with_first_row() -> None:
     assert len(unique) == 1000 - k
 
 
+def test_duplicate_id_clamps_at_population_size() -> None:
+    """``duplicate_id`` clamps at ``total - 1``, the size of its candidate pool.
+
+    Row 0 is always kept canonical, so duplicates are drawn only from
+    ``range(1, total)`` (``total - 1`` candidates). A count at or above that
+    bound collapses every row onto row 0's id: ``total`` occurrences and a
+    single unique id.
+    """
+    total = 10
+    rows = api.run(total, duplicate_id=1000)
+    canonical_id = rows[0][api.PK_FIELD]
+    occurrences = sum(1 for row in rows if row[api.PK_FIELD] == canonical_id)
+    unique = {row[api.PK_FIELD] for row in rows}
+    assert occurrences == total
+    assert len(unique) == 1
+
+
+def test_event_ts_matches_loaded_at_and_is_uniform() -> None:
+    """``event_ts`` inside ``data`` equals the envelope ``loaded_at`` for all rows.
+
+    Both timestamps derive from the single ``run_ts`` captured per invocation:
+    ``event_ts`` is its ISO-8601 string and ``loaded_at`` is the ``datetime``
+    itself. Every record in a run shares the same value.
+    """
+    import json
+
+    run_ts = api.make_run_ts()
+    records = api.run(100)
+    rows = list(api.pack_rows(records, batch_id="b-1", loaded_at=run_ts))
+    expected_iso = run_ts.isoformat()
+
+    event_ts_values = set()
+    for _record, (_batch_id, payload, _digest, loaded_at) in zip(
+        records, rows, strict=True
+    ):
+        record = json.loads(payload)
+        assert record[api.MISSING_FIELD] == expected_iso
+        assert loaded_at == run_ts
+        assert record[api.MISSING_FIELD] == loaded_at.isoformat()
+        event_ts_values.add(record[api.MISSING_FIELD])
+    assert event_ts_values == {expected_iso}
+
+
 def test_mutations_clamp_at_total() -> None:
     """A count larger than ``total`` is clamped to ``total`` rather than failing."""
     rows = api.run(10, null_message=1000)

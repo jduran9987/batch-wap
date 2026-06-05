@@ -4,10 +4,13 @@ Working rules for the mocked source package. Read before changing any file here.
 
 ## Refactor rule
 
-The generator's **output is a contract**, not an implementation detail. The
-ingestion jobs and their stress tests depend on it being stable and
-reproducible. When refactoring, preserve observable output behavior exactly —
-the invariants below are the things that must not change.
+The generator's **output structure and defect counts are a contract**, not an
+implementation detail. The ingestion jobs and their stress tests depend on the
+key set, sequencing, and exact defect counts being stable — but **not** on
+specific field values or defect placement, which are random and differ on every
+run. When refactoring, preserve the observable output contract (schema, counts,
+sequencing, overlap precedence) exactly — the invariants below are the things
+that must not change.
 
 > ⚠️ A contract test suite lives at `tests/batch_data_generator/`. It consumes the
 > generator's output **in memory** and never touches the sink, so it stays valid
@@ -38,7 +41,7 @@ Keep these responsibilities separated; a refactor should not blur them.
   applies overlap precedence, yields in chunks. Does **not** validate, build
   dataframes, write to storage, or persist state.
 - **`state.py`** — generation state and reservations: sequence/range tracking,
-  load/save, atomic persistence. Pure bookkeeping, no I/O to the warehouse.
+  load/save via plain overwrite. Pure bookkeeping, no I/O to the warehouse.
 - **`envelope.py`** — the raw-record shape and its serialization/hashing (the
   on-the-wire/at-rest representation of a generated row).
 - **`sink.py`** — writing batches out to the raw table in ClickHouse. The only
@@ -53,10 +56,12 @@ Keep these responsibilities separated; a refactor should not blur them.
 These define the contract. Changing any of them is a behavior change, not a
 refactor.
 
-- **Determinism** — for a fixed seed, the generated data is reproducible: same
-  keys, same defect placement, same logical field values, in the same order.
-  (How a row is *encoded* for storage belongs to `sink.py` and may change with
-  the backend; the logical record content is what must stay stable.)
+- **Non-deterministic output** — runs are **not** reproducible. The generator
+  uses an unseeded RNG (and `Faker` without a fixed seed), so defect placement,
+  event types, and messages differ on every run. Only the *structural* contract
+  is stable: the key set, sequential ids, exact defect counts, and overlap
+  precedence. Do not write tests or downstream consumers that depend on specific
+  field values or on which rows carry which defects.
 - **Unique sequential keys** — primary keys are unique and sequential across a
   run, continuing from prior state (no gaps, no reuse).
 - **Exact defect counts** — each defect knob produces exactly the requested
@@ -79,8 +84,10 @@ refactor.
   generate → write all batches → save next state **only after** all inserts
   succeed. Any failure mid-write leaves the state file untouched (no partial
   advance).
-- **Atomic state writes** — saving state is overwrite-safe and leaves no
-  leftover temp files; loading a missing state file yields empty state.
+- **Missing state file yields empty state** — loading a missing state file
+  yields empty state (`last_id` 0, so ids start at 1). Saving state is a plain
+  in-place overwrite; it is **not** crash-safe, and that is acceptable for this
+  workload (state advances only after a fully successful write).
 
 ## ClickHouse sink
 
