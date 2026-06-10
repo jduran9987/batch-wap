@@ -10,7 +10,7 @@ import json
 
 import pytest
 
-from batch_wap.ingestion.wap_v1.models import (
+from batch_wap.ingestion.wap_v1.stage_events.models import (
     ValidationResult,
     parse_and_validate,
     validate_data,

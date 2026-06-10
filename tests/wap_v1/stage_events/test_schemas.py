@@ -7,7 +7,7 @@ ReplacingMergeTree and monthly partitioning.
 
 from __future__ import annotations
 
-from batch_wap.ingestion.wap_v1.schemas import (
+from batch_wap.ingestion.wap_v1.stage_events.schemas import (
     QUARANTINE_EVENTS_INSERT_COLUMNS,
     STATISTICS_STG_EVENTS_INSERT_COLUMNS,
     STG_EVENTS_INSERT_COLUMNS,

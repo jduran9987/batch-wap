@@ -15,7 +15,7 @@ from datetime import datetime, timezone
 import _helpers
 import pytest
 
-from batch_wap.ingestion.wap_v1 import job
+from batch_wap.ingestion.wap_v1.stage_events import job
 
 FakeReader = _helpers.FakeReader
 FakeWriter = _helpers.FakeWriter

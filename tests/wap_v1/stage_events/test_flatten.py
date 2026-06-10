@@ -11,7 +11,7 @@ from datetime import datetime, timezone
 
 import polars as pl
 
-from batch_wap.ingestion.wap_v1.flatten import flatten_valid
+from batch_wap.ingestion.wap_v1.stage_events.flatten import flatten_valid
 
 _UTC = timezone.utc
 _JOB_RUN_ID = "w202606051150"

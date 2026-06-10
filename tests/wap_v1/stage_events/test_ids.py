@@ -11,7 +11,7 @@ from datetime import datetime, timedelta, timezone
 
 import pytest
 
-from batch_wap.ingestion.wap_v1.ids import derive_job_run_id
+from batch_wap.ingestion.wap_v1.stage_events.ids import derive_job_run_id
 
 _UTC = timezone.utc
 

@@ -13,9 +13,10 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass, field
+from datetime import datetime
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, ValidationError
+from pydantic import BaseModel, ConfigDict, ValidationError, field_validator
 
 
 class RawEvent(BaseModel):
@@ -32,6 +33,21 @@ class RawEvent(BaseModel):
     event_type: str
     event_ts: str
     message: str
+
+    @field_validator("event_ts")
+    @classmethod
+    def _check_event_ts_is_datetime(cls, value: str) -> str:
+        """Ensure ``event_ts`` is a datetime-parseable string.
+
+        The field stays a ``str`` (so it round-trips unchanged into
+        ClickHouse), but its value must be parseable as an ISO-8601 datetime,
+        since downstream jobs convert it to a ClickHouse ``DateTime``.
+        """
+        try:
+            datetime.fromisoformat(value)
+        except ValueError as exc:
+            raise ValueError(f"event_ts is not a valid datetime string: {value!r}") from exc
+        return value
 
 
 @dataclass(frozen=True)

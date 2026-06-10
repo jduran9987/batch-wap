@@ -47,10 +47,10 @@ from typing import Any
 
 import polars as pl
 
-from batch_wap.ingestion.wap_v1 import flatten as flatten_mod
-from batch_wap.ingestion.wap_v1 import models as models_mod
-from batch_wap.ingestion.wap_v1.clickhouse import Reader, Writer
-from batch_wap.ingestion.wap_v1.ids import derive_job_run_id
+from batch_wap.ingestion.wap_v1.stage_events import flatten as flatten_mod
+from batch_wap.ingestion.wap_v1.stage_events import models as models_mod
+from batch_wap.ingestion.wap_v1.stage_events.clickhouse import Reader, Writer
+from batch_wap.ingestion.wap_v1.stage_events.ids import derive_job_run_id
 
 _log = logging.getLogger(__name__)
 

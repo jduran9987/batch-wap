@@ -25,8 +25,8 @@ from typing import Union
 
 import clickhouse_connect
 
-from batch_wap.ingestion.wap_v1.clickhouse import ClickHouseReader, ClickHouseWriter
-from batch_wap.ingestion.wap_v1.job import run
+from batch_wap.ingestion.wap_v1.stage_events.clickhouse import ClickHouseReader, ClickHouseWriter
+from batch_wap.ingestion.wap_v1.stage_events.job import run
 
 
 def _parse_datetime(value: str) -> datetime:

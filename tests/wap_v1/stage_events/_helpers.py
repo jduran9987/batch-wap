@@ -101,7 +101,7 @@ def make_source_frame(
 
 
 class FakeReader:
-    """Test double for :class:`~batch_wap.ingestion.wap_v1.clickhouse.Reader`.
+    """Test double for :class:`~batch_wap.ingestion.wap_v1.stage_events.clickhouse.Reader`.
 
     Returns the injected Polars frame from ``read_raw_events``; never opens
     a database connection.
@@ -141,7 +141,7 @@ class FakeReader:
 
 
 class FakeWriter:
-    """Test double for :class:`~batch_wap.ingestion.wap_v1.clickhouse.Writer`.
+    """Test double for :class:`~batch_wap.ingestion.wap_v1.stage_events.clickhouse.Writer`.
 
     Captures every call from ``job.run``; constructs no ``clickhouse-connect``
     client.

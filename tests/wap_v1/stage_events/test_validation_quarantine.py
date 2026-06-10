@@ -15,7 +15,7 @@ from datetime import datetime, timezone
 
 import _helpers
 
-from batch_wap.ingestion.wap_v1 import job
+from batch_wap.ingestion.wap_v1.stage_events import job
 
 EXTRA_FIELD = _helpers.EXTRA_FIELD
 MISSING_FIELD = _helpers.MISSING_FIELD
