@@ -19,17 +19,6 @@ import polars as pl
 # Ordered list of columns written to raw.stg_events (excluding DEFAULT columns).
 # Must match STG_EVENTS_INSERT_COLUMNS in schemas.py — kept in sync manually;
 # schemas.py is the authoritative source for the DDL.
-_STAGING_COLUMNS: list[str] = [
-    "id",
-    "event_type",
-    "event_ts",
-    "message",
-    "hashed_json",
-    "batch_id",
-    "source_loaded_at",
-    "job_run_id",
-]
-
 _STAGING_SCHEMA: dict[str, pl.DataType] = {
     "id": pl.Int64,
     "event_type": pl.String,

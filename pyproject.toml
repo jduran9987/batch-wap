@@ -16,6 +16,7 @@ dependencies = [
 
 [project.scripts]
 batch-data-generator = "batch_wap.sources.batch_data_generator.cli:main"
+wap-v1-staging = "batch_wap.ingestion.wap_v1.stage_events.cli:main"
 
 [build-system]
 requires = ["uv_build>=0.9.18,<0.10.0"]

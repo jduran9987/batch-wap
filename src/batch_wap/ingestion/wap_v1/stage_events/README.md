@@ -1,8 +1,7 @@
 # WAP v1 — Staging Job
 
 Reads a 10-minute window of raw events from ClickHouse, validates each record
-structurally, and routes rows to three target tables.  See `SPEC.md` at the
-repo root for the full design rationale.
+structurally, and routes rows to three target tables.
 
 ## Job steps
 
@@ -22,6 +21,31 @@ repo root for the full design rationale.
 `"w" + strftime("%Y%m%d%H%M", window_start UTC)`.  Because the id is a pure
 function of the window, any retrigger targets the same partition and replaces
 its own prior output.
+
+## Assumptions
+
+- Source data is append-only: every row produced by the source is a new
+  record. There are no updates to existing records, so the job does not
+  attempt to detect or merge changes to previously ingested rows.
+
+## CLI arguments
+
+Run via `uv run wap-v1-staging`. Each `--*-table` argument takes a fully
+qualified `database.table` name, split into separate database/table values for
+the ClickHouse client.
+
+| Argument | Description |
+|---|---|
+| `--window-start` | Inclusive window start (timezone-aware ISO-8601). Required. |
+| `--window-end` | Exclusive window end (timezone-aware ISO-8601). Required. |
+| `--source-table` | Source table to read raw events from, as `database.table`. Default `raw.raw_events` (env `WAP_SOURCE_TABLE`). |
+| `--stg-table` | Staging table to write validated rows to, as `database.table`. Default `raw.stg_events` (env `WAP_STG_TABLE`). |
+| `--quarantine-table` | Quarantine table to write failed rows to, as `database.table`. Default `quarantine.raw_events` (env `WAP_QUARANTINE_TABLE`). |
+| `--statistics-table` | Statistics table to write the per-run summary row to, as `database.table`. Default `statistics.stg_events` (env `WAP_STATISTICS_TABLE`). |
+| `--ch-host` | ClickHouse host. Default `localhost` (env `CLICKHOUSE_HOST`). |
+| `--ch-port` | ClickHouse HTTP port. Default `8123` (env `CLICKHOUSE_PORT`). |
+| `--ch-user` | ClickHouse user. Default `default` (env `CLICKHOUSE_USER`). |
+| `--ch-password` | ClickHouse password (env `CLICKHOUSE_PASSWORD`). |
 
 ## Target tables
 
